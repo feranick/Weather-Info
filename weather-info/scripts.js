@@ -263,7 +263,7 @@ async function getNWS(coords) {
 // Logic when pushing Update Status button
 //////////////////////////////////////////////
 async function updateStatus(getCoordsFlag) {
-    document.getElementById("Status").value = "Update: \n Loading...";
+    document.getElementById("Status").value = "Loading...";
     //document.getElementById("warnLabel").textContent = "Testing";
     //coords = null;
     if (getCoordsFlag === true || coords === null) {
