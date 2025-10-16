@@ -1,4 +1,4 @@
-const version = "2025.10.15.3";
+const version = "2025.10.16.1";
 let coords = null;
 
 ////////////////////////////////////
