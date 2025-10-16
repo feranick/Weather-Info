@@ -1,4 +1,3 @@
-const ow_api_key = "e11595e5e85bcf80302889e0f669b370";
 const version = "2025.10.15.3";
 let coords = null;
 
@@ -43,7 +42,8 @@ async function getFeed(url) {
 // Ger OpenWeather location and weather data
 //////////////////////////////////////////////
 // This is the old version using fixed variables form zip and country.
-async function getCoordsOW(ow_api_key) {
+async function getCoordsOW() {
+    const ow_api_key = "e11595e5e85bcf80302889e0f669b370";
     const zipcode = "02139";
     const country = "US";
     geo_url = "https://api.openweathermap.org/geo/1.0/zip?zip="+zipcode+","+country+"&appid="+ow_api_key;
@@ -270,8 +270,8 @@ async function updateStatus(getCoordsFlag) {
         try {
             coords = await getCoords();
         } catch (error) {
-            console.error("Failed to get coordinates or fetch weather data:", error.message);
-            coords = await getCoords(zipcode, country, ow_api_key);
+            console.error("Failed to get coordinates. Fallback to Openweathermap geolocation:", error.message);
+            coords = await getCoordsOW();
         }
     }
     if (!coords) {
@@ -433,82 +433,35 @@ function getWeatherDescription(code) {
   if (typeof code !== 'number') {
     return 'Invalid input: Code must be a number.';
   }
-
-  // Use the WMO convention for weather codes
   switch (code) {
-    // Clear Sky and Fog
-    case 0:
-      return 'Clear sky';
-    case 1:
-      return 'Mainly clear';
-    case 2:
-      return 'Partly cloudy';
-    case 3:
-      return 'Overcast';
-    case 45:
-      return 'Fog';
-    case 48:
-      return 'Depositing rime fog';
-
-    // Drizzle
-    case 51:
-      return 'Light drizzle';
-    case 53:
-      return 'Moderate drizzle';
-    case 55:
-      return 'Dense drizzle';
-
-    // Freezing Drizzle
-    case 56:
-      return 'Light freezing drizzle';
-    case 57:
-      return 'Dense freezing drizzle';
-
-    // Rain
-    case 61:
-      return 'Slight rain';
-    case 63:
-      return 'Moderate rain';
-    case 65:
-      return 'Heavy rain';
-
-    // Freezing Rain
-    case 66:
-      return 'Light freezing rain';
-    case 67:
-      return 'Heavy freezing rain';
-
-    // Snow
-    case 71:
-      return 'Slight snow fall';
-    case 73:
-      return 'Moderate snow fall';
-    case 75:
-      return 'Heavy snow fall';
-
-    // Snow Grains and Showers
-    case 77:
-      return 'Snow grains';
-    case 80:
-      return 'Slight rain showers';
-    case 81:
-      return 'Moderate rain showers';
-    case 82:
-      return 'Violent rain showers';
-    case 85:
-      return 'Slight snow showers';
-    case 86:
-      return 'Heavy snow showers';
-
-    // Thunderstorm
-    case 95:
-      return 'Thunderstorm: Slight or moderate';
-    case 96:
-      return 'Thunderstorm with slight hail';
-    case 99:
-      return 'Thunderstorm with heavy hail';
-
-    default:
-      return 'Unknown weather code';
+    case 0: return 'Clear sky';
+    case 1: return 'Mainly clear';
+    case 2: return 'Partly cloudy';
+    case 3: return 'Overcast';
+    case 45: return 'Fog';
+    case 48: return 'Depositing rime fog';
+    case 51: return 'Light drizzle';
+    case 53: return 'Moderate drizzle';
+    case 55: return 'Dense drizzle';
+    case 56: return 'Light freezing drizzle';
+    case 57: return 'Dense freezing drizzle';
+    case 61: return 'Slight rain';
+    case 63: return 'Moderate rain';
+    case 65: return 'Heavy rain';
+    case 66: return 'Light freezing rain';
+    case 67: return 'Heavy freezing rain';
+    case 71: return 'Slight snow fall';
+    case 73: return 'Moderate snow fall';
+    case 75: return 'Heavy snow fall';
+    case 77: return 'Snow grains';
+    case 80: return 'Slight rain showers';
+    case 81: return 'Moderate rain showers';
+    case 82: return 'Violent rain showers';
+    case 85: return 'Slight snow showers';
+    case 86: return 'Heavy snow showers';
+    case 95: return 'Thunderstorm: Slight or moderate';
+    case 96: return 'Thunderstorm with slight hail';
+    case 99: return 'Thunderstorm with heavy hail';
+    default: return 'Unknown weather code';
   }
 }
