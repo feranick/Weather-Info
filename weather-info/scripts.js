@@ -1,4 +1,4 @@
-const version = "2025.10.16.2";
+const version = "2025.10.19.1";
 let coords = null;
 
 ////////////////////////////////////
@@ -176,6 +176,8 @@ async function getNWS(coords) {
     
     let omNowData = (await getFeed(om_weather_url+"&current=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,wet_bulb_temperature_2m,weather_code,surface_pressure,visibility"))
     
+    let omNextData = (await getFeed(om_weather_url+"&forecast_days=2&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,wet_bulb_temperature_2m,weather_code,surface_pressure,visibility"))
+    
     //console.log(omNowData)
 
     nws_coords_url = "https://api.weather.gov/points/"+coords[0]+","+coords[1]
@@ -255,7 +257,8 @@ async function getNWS(coords) {
     else {
         r.presentWeather = getWeatherDescription(omNowData['current']['weather_code']);
         }
-        
+    r.futureWeather = getWeatherDescription(omNextData['hourly']['weather_code'][36]);
+    console.log(r.futureWeather);
     return r;
     }
    
@@ -328,6 +331,7 @@ async function updateStatus(getCoordsFlag) {
     document.getElementById("ext_pressure").textContent = nws.seaLevelPressure+" mbar";
     document.getElementById("ext_heatindex").textContent = nws.heatIndex+" \u00b0C";
     document.getElementById("ext_weather").textContent = nws.presentWeather;
+    document.getElementById("ext_next_weather").textContent = nws.futureWeather;
     document.getElementById("ext_visibility").textContent = nws.visibility+" m";
     document.getElementById("ext_dewpoint").textContent = nws.dewpoint+" \u00b0C";
     document.getElementById("ext_wetbulb").textContent = nws.wetbulb+" \u00b0C";
