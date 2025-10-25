@@ -1,32 +1,11 @@
-const version = "2025.10.21.1";
+const version = "2025.10.25.1";
 let coords = null;
 
 ////////////////////////////////////
 // Get and format Date and Time
 ////////////////////////////////////
 function getCurrentDateTime() {
-    function get_dig(a) {
-        if (a<10) {
-            secs = "0"+a;}
-        else {
-            secs = a;}
-        return secs;}
-        
-    let now = new Date();
-    month = now.getMonth()+1
-    day = now.getDate()
-    year = now.getFullYear()
-    hours = get_dig(now.getHours())
-    minutes = get_dig(now.getMinutes())
-    
-    if (now.getSeconds()<10) {
-        secs = "0"+now.getSeconds();}
-    else {
-        secs = now.getSeconds();}
-        
-    formattedTime = hours +":"+minutes+":"+secs;
-    formattedDate = month+"/"+day+"/"+year;
-    return formattedDate+"      "+formattedTime;
+    return new Date().toLocaleString();
     }
 
 ////////////////////////////////////
@@ -285,6 +264,7 @@ async function updateStatus(getCoordsFlag) {
     }
     
     base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
+    
     datetime = getCurrentDateTime();
     nws = await getNWS(coords);
     //aqi = await getOW(coords, ow_api_key);
