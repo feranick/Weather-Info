@@ -5,7 +5,9 @@ let coords = null;
 // Get and format Date and Time
 ////////////////////////////////////
 function getCurrentDateTime() {
-    return new Date().toLocaleString();
+    datetime = new Date().toLocaleString();
+    document.getElementById("datetime").textContent = datetime;
+    document.getElementById("version").textContent = version;
     }
 
 ////////////////////////////////////
@@ -266,13 +268,9 @@ async function updateStatus(getCoordsFlag) {
     
     backgroundTasks.push(updateNWS(coords));
     backgroundTasks.push(updateOM(coords));
+    backgroundTasks.push(getCurrentDateTime());
     
     await Promise.all(backgroundTasks);
-    
-    datetime = getCurrentDateTime();
-
-    document.getElementById("datetime").textContent = datetime;
-    document.getElementById("version").textContent = version;
 
     //document.getElementById("warnLabel").textContent = "Update: \n Ready";
     document.getElementById("Status").value = "Update";
