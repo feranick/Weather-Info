@@ -1,4 +1,4 @@
-const version = "2025.10.25.1";
+const version = "2025.11.24.1";
 let coords = null;
 
 ////////////////////////////////////
@@ -262,20 +262,43 @@ async function updateStatus(getCoordsFlag) {
         document.getElementById("Status").disabled = false; // Re-enable button
         return; // Exit the function early
     }
+    const backgroundTasks = [];
     
-    base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
+    backgroundTasks.push(updateNWS(coords));
+    backgroundTasks.push(updateOM(coords));
+    
+    await Promise.all(backgroundTasks);
     
     datetime = getCurrentDateTime();
+
+    document.getElementById("datetime").textContent = datetime;
+    document.getElementById("version").textContent = version;
+
+    //document.getElementById("warnLabel").textContent = "Update: \n Ready";
+    document.getElementById("Status").value = "Update";
+    document.getElementById("warnLabel").textContent = "";
+    document.getElementById("Status").disabled = false;
+}
+
+async function updateNWS(coords) {
     nws = await getNWS(coords);
-    //aqi = await getOW(coords, ow_api_key);
-    aqi = await getOM(coords);
-    
-    document.getElementById("Status").style.backgroundColor = "navy";
-    
+    base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
     document.getElementById("station").innerHTML = "<a href='"+base_forecast_url+"'>"+nws.stationName+"</a>";
     document.getElementById("ext_temperature").textContent = nws.temperature+" \u00b0C";
     document.getElementById("ext_RH").textContent = nws.relativeHumidity+" %";
-    
+    document.getElementById("ext_pressure").textContent = nws.seaLevelPressure+" mbar";
+    document.getElementById("ext_heatindex").textContent = nws.heatIndex+" \u00b0C";
+    document.getElementById("ext_weather").textContent = nws.presentWeather;
+    document.getElementById("ext_next_weather_am").textContent = nws.futureWeatherAM;
+    document.getElementById("ext_next_weather_pm").textContent = nws.futureWeatherPM;
+    document.getElementById("ext_visibility").textContent = nws.visibility+" m";
+    document.getElementById("ext_dewpoint").textContent = nws.dewpoint+" \u00b0C";
+    document.getElementById("ext_wetbulb").textContent = nws.wetbulb+" \u00b0C";
+}
+
+async function updateOM(coords) {
+    aqi = await getOM(coords);
+        
     const pollutantMap = [
     { idSuffix: "aqi_now", aqiProp: "aqi_now", colorRanges: aqiColorRanges },
     { idSuffix: "aqi_next", aqiProp: "aqi_next", colorRanges: aqiColorRanges },
@@ -307,24 +330,8 @@ async function updateStatus(getCoordsFlag) {
         element.textContent = 'N/A';
     }
     });
+    }
     
-    document.getElementById("ext_pressure").textContent = nws.seaLevelPressure+" mbar";
-    document.getElementById("ext_heatindex").textContent = nws.heatIndex+" \u00b0C";
-    document.getElementById("ext_weather").textContent = nws.presentWeather;
-    document.getElementById("ext_next_weather_am").textContent = nws.futureWeatherAM;
-    document.getElementById("ext_next_weather_pm").textContent = nws.futureWeatherPM;
-    document.getElementById("ext_visibility").textContent = nws.visibility+" m";
-    document.getElementById("ext_dewpoint").textContent = nws.dewpoint+" \u00b0C";
-    document.getElementById("ext_wetbulb").textContent = nws.wetbulb+" \u00b0C";
-
-    document.getElementById("datetime").textContent = datetime;
-    document.getElementById("version").textContent = version;
-
-    //document.getElementById("warnLabel").textContent = "Update: \n Ready";
-    document.getElementById("Status").value = "Update";
-    document.getElementById("warnLabel").textContent = "";
-    document.getElementById("Status").disabled = false;
-}
 
 // Start the status update when the page is fully loaded
 document.addEventListener('DOMContentLoaded', updateStatus);
