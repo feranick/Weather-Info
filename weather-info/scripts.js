@@ -1,4 +1,5 @@
 const version = "2025.12.09.1";
+console.log("Version: "+version);
 let coords = null;
 
 ////////////////////////////////////
@@ -143,8 +144,8 @@ async function getOM(coords) {
         if (typeof r[keys[i]] !== 'number' || r[keys[i]] === null || r[keys[i]] === undefined) {
             r[keys[i]] = DEFAULT_MISSING;
         }}
-    console.log("Open-meteo: ");
-    console.log(r);
+    //console.log("Open-meteo: ");
+    //console.log(r);
     return r;
     }
 
@@ -163,9 +164,9 @@ async function getNWS(coords) {
     const nws_coords_url = "https://api.weather.gov/points/"+coords[0]+","+coords[1]
     const coordData = await getFeed(nws_coords_url);
     const nws_stations_url = coordData["properties"]["observationStations"]
-    console.log(nws_stations_url);
+    //console.log(nws_stations_url);
     const stationData = (await getFeed(nws_stations_url));
-    console.log(stationData["features"][0]["id"]);
+    //console.log(stationData["features"][0]["id"]);
     const nws_url = stationData["features"][0]["id"]+"/observations/latest/";
 
     const data = await getFeed(nws_url);
