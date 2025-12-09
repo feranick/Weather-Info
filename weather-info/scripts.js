@@ -5,7 +5,7 @@ let coords = null;
 // Get and format Date and Time
 ////////////////////////////////////
 function getCurrentDateTime() {
-    datetime = new Date().toLocaleString();
+    const datetime = new Date().toLocaleString();
     document.getElementById("datetime").textContent = datetime;
     document.getElementById("version").textContent = version;
     }
@@ -27,8 +27,8 @@ async function getCoordsOW() {
     const ow_api_key = "e11595e5e85bcf80302889e0f669b370";
     const zipcode = "02139";
     const country = "US";
-    geo_url = "https://api.openweathermap.org/geo/1.0/zip?zip="+zipcode+","+country+"&appid="+ow_api_key;
-    let data = (await getFeed(geo_url));
+    const geo_url = "https://api.openweathermap.org/geo/1.0/zip?zip="+zipcode+","+country+"&appid="+ow_api_key;
+    const data = await getFeed(geo_url);
     return [data["lat"], data["lon"]];
     }
 
@@ -69,12 +69,12 @@ async function getCoords() {
 }
 /*
 async function getOW(coords, ow_api_key) {
-    DEFAULT_MISSING = "--";
+    const DEFAULT_MISSING = "--";
     
-    aqi_current_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat="+coords[0]+"&lon="+coords[1]+"&appid="+ow_api_key;
+    const aqi_current_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat="+coords[0]+"&lon="+coords[1]+"&appid="+ow_api_key;
         aqi_forecast_url = "https://api.openweathermap.org/data/2.5/air_pollution/forecast?lat="+coords[0]+"&lon="+coords[1]+"&appid="+ow_api_key;
     
-    let data = (await getFeed(aqi_current_url))["list"][0];
+    const data = (await getFeed(aqi_current_url))["list"][0];
     
     let r = {};
     r.aqi_now = data["main"]["aqi"];
@@ -103,13 +103,12 @@ async function getOW(coords, ow_api_key) {
     }
 */
 async function getOM(coords) {
-    DEFAULT_MISSING = "--";
+    const DEFAULT_MISSING = "--";
     
-    aqi_om_url = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+coords[0]+"&longitude="+coords[1];
+    const aqi_om_url = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+coords[0]+"&longitude="+coords[1];
+    const omNowData = await getFeed(aqi_om_url+"&current=us_aqi,pm10,pm2_5,uv_index,ozone,carbon_dioxide,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ammonia,methane");
     
-    let omNowData = (await getFeed(aqi_om_url+"&current=us_aqi,pm10,pm2_5,uv_index,ozone,carbon_dioxide,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ammonia,methane"))
-    
-    let omNextData = (await getFeed(aqi_om_url+"&forecast_days=2&hourly=us_aqi,pm10,pm2_5,uv_index,ozone,carbon_dioxide,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ammonia,methane"))
+    const omNextData = await getFeed(aqi_om_url+"&forecast_days=2&hourly=us_aqi,pm10,pm2_5,uv_index,ozone,carbon_dioxide,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ammonia,methane");
     
     //console.log(omData);
     //console.log(omPredData);
@@ -153,23 +152,23 @@ async function getOM(coords) {
 // Get NWS data
 ////////////////////////////////////
 async function getNWS(coords) {
-    om_weather_url = "https://api.open-meteo.com/v1/forecast?latitude="+coords[0]+"&longitude="+coords[1];
+    const om_weather_url = "https://api.open-meteo.com/v1/forecast?latitude="+coords[0]+"&longitude="+coords[1];
     
-    let omNowData = (await getFeed(om_weather_url+"&current=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,wet_bulb_temperature_2m,weather_code,surface_pressure,visibility"))
+    const omNowData = await getFeed(om_weather_url+"&current=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,wet_bulb_temperature_2m,weather_code,surface_pressure,visibility");
     
-    let omNextData = (await getFeed(om_weather_url+"&forecast_days=2&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,wet_bulb_temperature_2m,weather_code,surface_pressure,visibility"))
+    const omNextData = await getFeed(om_weather_url+"&forecast_days=2&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,wet_bulb_temperature_2m,weather_code,surface_pressure,visibility");
     
     //console.log(omNowData)
 
-    nws_coords_url = "https://api.weather.gov/points/"+coords[0]+","+coords[1]
-    let coordData = (await getFeed(nws_coords_url));
-    nws_stations_url = coordData["properties"]["observationStations"]
+    const nws_coords_url = "https://api.weather.gov/points/"+coords[0]+","+coords[1]
+    const coordData = await getFeed(nws_coords_url);
+    const nws_stations_url = coordData["properties"]["observationStations"]
     console.log(nws_stations_url);
-    let stationData = (await getFeed(nws_stations_url));
+    const stationData = (await getFeed(nws_stations_url));
     console.log(stationData["features"][0]["id"]);
-    nws_url = stationData["features"][0]["id"]+"/observations/latest/";
+    const nws_url = stationData["features"][0]["id"]+"/observations/latest/";
 
-    let data = (await getFeed(nws_url));
+    const data = await getFeed(nws_url);
     let r = {};
     
     let keys = [
@@ -281,8 +280,8 @@ async function updateStatus(getCoordsFlag) {
 }
 
 async function updateNWS(coords) {
-    nws = await getNWS(coords);
-    base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
+    const nws = await getNWS(coords);
+    const base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
     document.getElementById("station").innerHTML = "<a href='"+base_forecast_url+"'>"+nws.stationName+"</a>";
     document.getElementById("ext_temperature").textContent = nws.temperature+" \u00b0C";
     document.getElementById("ext_RH").textContent = nws.relativeHumidity+" %";
@@ -299,7 +298,7 @@ async function updateNWS(coords) {
 }
 
 async function updateOM(coords) {
-    aqi = await getOM(coords);
+    const aqi = await getOM(coords);
         
     const pollutantMap = [
     { idSuffix: "aqi_now", aqiProp: "aqi_now", colorRanges: aqiColorRanges },
