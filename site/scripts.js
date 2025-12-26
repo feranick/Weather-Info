@@ -1,4 +1,4 @@
-const version = "2025.12.25.1";
+const version = "2025.12.25.2";
 console.log("Version: "+version);
 let coords = null;
 
