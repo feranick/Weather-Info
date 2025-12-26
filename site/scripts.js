@@ -1,4 +1,4 @@
-const version = "2025.12.09.1";
+const version = "2025.12.25.1";
 console.log("Version: "+version);
 let coords = null;
 
@@ -255,9 +255,11 @@ async function updateStatus(getCoordsFlag) {
     if (getCoordsFlag === true || coords === null) {
         try {
             coords = await getCoords();
+            console.log("Coordinates aquired from device: "+coords);
         } catch (error) {
             console.error("Failed to get coordinates. Fallback to Openweathermap geolocation:", error.message);
             coords = await getCoordsOW();
+            console.log("Coordinates aquired OW via zip: "+coords);
         }
     }
     if (!coords) {
@@ -338,8 +340,7 @@ async function updateOM(coords) {
 // Start the status update when the page is fully loaded
 document.addEventListener('DOMContentLoaded', updateStatus);
 // Optionally, update status every 30 seconds automatically
-setInterval(updateStatus, 30000, "False");
-
+setInterval(updateStatus, 30000, "true");
 
 //////////////////////////////////////////////
 // Utilities
