@@ -34,40 +34,73 @@ async function getCoordsOW() {
     }
 
 // Get coordinates from device
+// Get coordinates from device with High Accuracy -> Low Accuracy Fallback
 async function getCoords() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            return reject(new Error("Geolocation is not supported by this browser."));
+    
+    // A wrapper to make navigator.geolocation work with async/await
+    const getPositionPromise = (options) => {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                return reject(new Error("Geolocation is not supported by this browser."));
+            }
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve([position.coords.latitude, position.coords.longitude]);
+                },
+                (error) => {
+                    reject(error);
+                },
+                options
+            );
+        });
+    };
+
+    // Switch logic helper to format messages
+    const formatError = (error) => {
+        let errorMessage = "Geolocation error: ";
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                errorMessage += "User denied the request for Geolocation.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                errorMessage += "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                errorMessage += "The request to get user location timed out.";
+                break;
+            default:
+                errorMessage += "An unknown error occurred.";
         }
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                // Resolve the promise with the [latitude, longitude] array
-                resolve([latitude, longitude]);
-            },
-            (error) => {
-                // Reject the promise if the request fails
-                let errorMessage = "Geolocation error: ";
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage += "User denied the request for Geolocation.";
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage += "Location information is unavailable.";
-                        break;
-                    case error.TIMEOUT:
-                        errorMessage += "The request to get user location timed out.";
-                        break;
-                    default:
-                        errorMessage += "An unknown error occurred.";
-                }
-                reject(new Error(errorMessage));
-            },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-    });
+        return errorMessage;
+    };
+
+    // Execution Logic
+    try {
+        // ATTEMPT 1: High Accuracy (GPS)
+        coords = await getPositionPromise({ enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
+        console.log("High accuracy coordinates: "+coords);
+        return coords;
+
+    } catch (error) {
+        console.warn("High accuracy attempt failed: " + formatError(error));
+
+        if (error.code === error.PERMISSION_DENIED) {
+            throw new Error(formatError(error));
+        }
+
+        // ATTEMPT 2: Low Accuracy (Wi-Fi/Cellular Fallback)
+        try {
+            console.log("Attempting fallback to low accuracy...");
+            coords = await getPositionPromise({ enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
+            console.log("Low accuracy coordinates: "+coords);
+            return coords;
+        } catch (fallbackError) {
+            throw new Error(formatError(fallbackError));
+        }
+    }
 }
+
+
 /*
 async function getOW(coords, ow_api_key) {
     const DEFAULT_MISSING = "--";
@@ -255,11 +288,9 @@ async function updateStatus(getCoordsFlag) {
     if (getCoordsFlag === true || coords === null) {
         try {
             coords = await getCoords();
-            console.log("Coordinates aquired from device: "+coords);
         } catch (error) {
             console.error("Failed to get coordinates. Fallback to Openweathermap geolocation:", error.message);
             coords = await getCoordsOW();
-            console.log("Coordinates aquired OW via zip: "+coords);
         }
     }
     if (!coords) {
