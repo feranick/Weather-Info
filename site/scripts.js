@@ -318,7 +318,6 @@ async function updateNWS(coords) {
 
 async function updateOM_weather(coords) {
     const om = await getOM_weather(coords);
-    console.log(om);
     document.getElementById("ext_temperature").textContent = om.temperature+" \u00b0C";
     document.getElementById("ext_RH").textContent = om.rh+" %";
     document.getElementById("ext_heatindex").textContent = om.apparent_temp+" \u00b0C";
