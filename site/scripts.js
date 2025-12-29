@@ -1,4 +1,4 @@
-const version = "2025.12.25.2";
+const version = "2025.12.28.1";
 console.log("Version: "+version);
 let coords = null;
 
@@ -98,7 +98,29 @@ async function getCoords() {
     }
 }
 
-async function getOM(coords) {
+async function getOM_weather(coords) {
+    const DEFAULT_MISSING = "--";
+    const om_url = "https://api.open-meteo.com/v1/forecast?latitude="+coords[0]+"&longitude="+coords[1];
+    const omNowData = await getFeed(om_url+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,pressure_msl");
+    console.log(omNowData["current"]);
+    
+    let r = {};
+    r.temperature = omNowData["current"]["temperature_2m"];
+    r.rh = omNowData["current"]["relative_humidity_2m"];
+    r.apparent_temp = omNowData["current"]["apparent_temperature"];
+    r.pressure = omNowData["current"]["pressure_msl"];
+    
+    const keys = Object.keys(r);
+    for (var i = 0; i < keys.length; i++) {
+        if (typeof r[keys[i]] !== 'number' || r[keys[i]] === null || r[keys[i]] === undefined) {
+            r[keys[i]] = DEFAULT_MISSING;
+        }}
+    //console.log("Open-meteo: ");
+    console.log(r);
+    return r;
+    }
+
+async function getOM_aqi(coords) {
     const DEFAULT_MISSING = "--";
     
     const aqi_om_url = "https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+coords[0]+"&longitude="+coords[1];
@@ -263,8 +285,9 @@ async function updateStatus(getCoordsFlag) {
     }
     const backgroundTasks = [];
     
+    backgroundTasks.push(updateOM_weather(coords));
     backgroundTasks.push(updateNWS(coords));
-    backgroundTasks.push(updateOM(coords));
+    backgroundTasks.push(updateOM_aqi(coords));
     backgroundTasks.push(getCurrentDateTime());
     
     await Promise.all(backgroundTasks);
@@ -279,10 +302,10 @@ async function updateNWS(coords) {
     const nws = await getNWS(coords);
     const base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
     document.getElementById("station").innerHTML = "<a href='"+base_forecast_url+"'>"+nws.stationName+"</a>";
-    document.getElementById("ext_temperature").textContent = nws.temperature+" \u00b0C";
-    document.getElementById("ext_RH").textContent = nws.relativeHumidity+" %";
-    document.getElementById("ext_pressure").textContent = nws.seaLevelPressure+" mbar";
-    document.getElementById("ext_heatindex").textContent = nws.heatIndex+" \u00b0C";
+    //document.getElementById("ext_temperature").textContent = nws.temperature+" \u00b0C";
+    //document.getElementById("ext_RH").textContent = nws.relativeHumidity+" %";
+    //document.getElementById("ext_pressure").textContent = nws.seaLevelPressure+" mbar";
+    //document.getElementById("ext_heatindex").textContent = nws.heatIndex+" \u00b0C";
     document.getElementById("ext_weather").textContent = nws.presentWeather;
     document.getElementById("ext_next_weather_am").textContent = nws.futureWeatherAM;
     document.getElementById("ext_next_weather_pm").textContent = nws.futureWeatherPM;
@@ -293,8 +316,17 @@ async function updateNWS(coords) {
     document.getElementById("ext_wetbulb").textContent = nws.wetbulb+" \u00b0C";
 }
 
-async function updateOM(coords) {
-    const aqi = await getOM(coords);
+async function updateOM_weather(coords) {
+    const om = await getOM_weather(coords);
+    console.log(om);
+    document.getElementById("ext_temperature").textContent = om.temperature+" \u00b0C";
+    document.getElementById("ext_RH").textContent = om.rh+" %";
+    document.getElementById("ext_heatindex").textContent = om.apparent_temp+" \u00b0C";
+    document.getElementById("ext_pressure").textContent = om.pressure+" mbar";
+}
+
+async function updateOM_aqi(coords) {
+    const aqi = await getOM_aqi(coords);
         
     const pollutantMap = [
     { idSuffix: "aqi_now", aqiProp: "aqi_now", colorRanges: aqiColorRanges },
