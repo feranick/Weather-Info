@@ -1,4 +1,4 @@
-const version = "2025.12.28.1";
+const version = "2025.12.28.2";
 console.log("Version: "+version);
 let coords = null;
 
@@ -102,7 +102,7 @@ async function getOM_weather(coords) {
     const DEFAULT_MISSING = "--";
     const om_url = "https://api.open-meteo.com/v1/forecast?latitude="+coords[0]+"&longitude="+coords[1];
     const omNowData = await getFeed(om_url+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,pressure_msl");
-    console.log(omNowData["current"]);
+    //console.log(omNowData["current"]);
     
     let r = {};
     r.temperature = omNowData["current"]["temperature_2m"];
@@ -116,7 +116,7 @@ async function getOM_weather(coords) {
             r[keys[i]] = DEFAULT_MISSING;
         }}
     //console.log("Open-meteo: ");
-    console.log(r);
+    //console.log(r);
     return r;
     }
 
@@ -302,10 +302,10 @@ async function updateNWS(coords) {
     const nws = await getNWS(coords);
     const base_forecast_url = "https://forecast.weather.gov/MapClick.php?lat="+coords[0]+"&lon="+coords[1];
     document.getElementById("station").innerHTML = "<a href='"+base_forecast_url+"'>"+nws.stationName+"</a>";
-    //document.getElementById("ext_temperature").textContent = nws.temperature+" \u00b0C";
-    //document.getElementById("ext_RH").textContent = nws.relativeHumidity+" %";
-    //document.getElementById("ext_pressure").textContent = nws.seaLevelPressure+" mbar";
-    //document.getElementById("ext_heatindex").textContent = nws.heatIndex+" \u00b0C";
+    document.getElementById("nws_temperature").textContent = nws.temperature+" \u00b0C";
+    document.getElementById("nws_RH").textContent = nws.relativeHumidity+" %";
+    document.getElementById("nws_pressure").textContent = nws.seaLevelPressure+" mbar";
+    document.getElementById("nws_heatindex").textContent = nws.heatIndex+" \u00b0C";
     document.getElementById("ext_weather").textContent = nws.presentWeather;
     document.getElementById("ext_next_weather_am").textContent = nws.futureWeatherAM;
     document.getElementById("ext_next_weather_pm").textContent = nws.futureWeatherPM;
@@ -322,7 +322,6 @@ async function updateOM_weather(coords) {
     document.getElementById("ext_temperature").textContent = om.temperature+" \u00b0C";
     document.getElementById("ext_RH").textContent = om.rh+" %";
     document.getElementById("ext_heatindex").textContent = om.apparent_temp+" \u00b0C";
-    document.getElementById("ext_pressure").textContent = om.pressure+" mbar";
 }
 
 async function updateOM_aqi(coords) {

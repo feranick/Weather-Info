@@ -68,44 +68,49 @@ small { display: block; margin-top: 5px; }
 <script type="text/javascript" src="scripts.js" ></script>
 
 <fieldset>
-Temperature: <span id="ext_temperature">...</span>
-<br>Real Feeling: <span id="ext_heatindex">...</span>
-<br>Relative Humidity: <span id="ext_RH">...</span>
-<br><br>Air Quality Index: <span id="ext_aqi_now">...</span> (24h: <span id="ext_aqi_next">...</span>)
-<br>UV Index: <span id="ext_uvi_now">...</span> (24h: <span id="ext_uvi_next">...</span>)
-<small>
-<br>Today: <span id="ext_weather">...</span>
-<br>Tomorrow AM: <span id="ext_next_weather_am">...</span>:
+    Temperature: <span id="ext_temperature">...</span>
+    <br>Real Feeling: <span id="ext_heatindex">...</span>
+    <br>Relative Humidity: <span id="ext_RH">...</span>
+    <br><br>Air Quality Index: <span id="ext_aqi_now">...</span> (24h: <span id="ext_aqi_next">...</span>)
+    <br>UV Index: <span id="ext_uvi_now">...</span> (24h: <span id="ext_uvi_next">...</span>)
+    <small>
+    <br>Today: <span id="ext_weather">...</span>
+    <br>Tomorrow AM: <span id="ext_next_weather_am">...</span>:
     <span id="ext_next_temp_am">...</span>
-<br>Tomorrow PM: <span id="ext_next_weather_pm">...</span>:
+    <br>Tomorrow PM: <span id="ext_next_weather_pm">...</span>:
     <span id="ext_next_temp_pm">...</span>
-
-<br><br>Visibility: <span id="ext_visibility">...</span>
-<br>Dew Point: <span id="ext_dewpoint">...</span>
-<br>Wet Bulb Temp.: <span id="ext_wetbulb">...</span>
-<br>Pressure: <span id="ext_pressure">...</span>
-</small>
-<small><br><span id="station"></span>
-<br><span id="datetime">Time N/A</span></small>
 </fieldset>
 <fieldset>
-<div class="two-column-layout">
-<div class="column">
-CO: <span id="ext_co">...</span>
-<br>NO2: <span id="ext_no2">...</span>
-<br>O3: <span id="ext_o3">...</span>
-<br>CO2: <span id="ext_co2">...</span>
-<br>CH4: <span id="ext_ch4">...</span>
-</div>
-<div class="column">
-PM2.5: <span id="ext_pm2_5">...</span>
-<br>PM10: <span id="ext_pm10">...</span>
-<br>SO2: <span id="ext_so2">...</span>
-<br>NH3: <span id="ext_nh3">...</span>
-<br>Dust: <span id="ext_dust">...</span>
+    <small>
+    Temperature: <span id="nws_temperature">...</span>
+    <br>Real Feeling: <span id="nws_heatindex">...</span>
+    <br>Relative Humidity: <span id="nws_RH">...</span>
+    <br>Visibility: <span id="ext_visibility">...</span>
+    <br>Dew Point: <span id="ext_dewpoint">...</span>
+    <br>Wet Bulb Temp.: <span id="ext_wetbulb">...</span>
+    <br>Pressure: <span id="nws_pressure">...</span>
+    </small>
+    <small><br><span id="station"></span>
+    <br><span id="datetime">Time N/A</span></small>
+</fieldset>
+<fieldset>
+    <div class="two-column-layout">
+    <div class="column">
+    CO: <span id="ext_co">...</span>
+    <br>NO2: <span id="ext_no2">...</span>
+    <br>O3: <span id="ext_o3">...</span>
+    <br>CO2: <span id="ext_co2">...</span>
+    <br>CH4: <span id="ext_ch4">...</span>
+    </div>
+    <div class="column">
+    PM2.5: <span id="ext_pm2_5">...</span>
+    <br>PM10: <span id="ext_pm10">...</span>
+    <br>SO2: <span id="ext_so2">...</span>
+    <br>NH3: <span id="ext_nh3">...</span>
+    <br>Dust: <span id="ext_dust">...</span>
 
-</div>
-</div>
+    </div>
+    </div>
 </fieldset>
 <form name="statusForm">
     <input type="button" id="Status" value="Update" onclick="updateStatus(true)" />
